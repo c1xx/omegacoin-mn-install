@@ -111,7 +111,7 @@ virtualenv ./venv
 echo "* * * * * cd $DATA_DIR/sentinel && ./venv/bin/python bin/sentinel.py >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 
 echo '
-omegacoin_conf=$CONF_DIR/omegacoin.conf
+omegacoin_conf='$CONF_DIR'/omegacoin.conf
 network=mainnet
 db_name=database/sentinel.db
 db_driver=sqlite
