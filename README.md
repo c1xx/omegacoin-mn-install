@@ -1,6 +1,6 @@
 # Omegacoin Masternode Setup Script
 
-This Script was successfully tested on Unbuntu Xenial 16.04 x64.
+This Script was successfully tested on new provisioned VPS -> Unbuntu Xenial 16.04 x64.
 
 For Masternode Setup is **Omagecoin Core 0.12.5.1** used.
 
