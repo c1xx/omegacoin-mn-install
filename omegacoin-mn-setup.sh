@@ -108,6 +108,7 @@ sudo apt-get -y install python-virtualenv virtualenv
 git clone https://github.com/omegacoinnetwork/sentinel.git && cd sentinel
 virtualenv ./venv
 ./venv/bin/pip install -r requirements.txt
+./venv/bin/python bin/sentinel.py
 echo "* * * * * cd $DATA_DIR/sentinel && ./venv/bin/python bin/sentinel.py >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 
 echo '
