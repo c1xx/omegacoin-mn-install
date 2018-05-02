@@ -40,6 +40,7 @@ sleep 10
 password=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
 password2=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
 
+sudo apt-get install unzip -y
 wget $CORE_URL
 unzip $CORE_FILE -d $DATA_DIR
 sudo chmod +x $DATA_DIR/omegacoin-cli
@@ -48,22 +49,29 @@ sudo chmod +x $DATA_DIR/omegacoin-qt
 sudo mv $DATA_DIR/omegacoin-cli /usr/local/bin
 sudo mv $DATA_DIR/omegacoind /usr/local/bin
 sudo mv $DATA_DIR/omegacoin-qt /usr/local/bin
+sudo rm ~/$CORE_FILE
 sudo ufw allow $PORT/tcp
 
 # Create omegacoin.conf
 sudo mkdir $CONF_DIR
 sudo touch $CONF_DIR/$CONF_FILE
-echo '
-rpcuser='$password'
+echo 'rpcuser='$password'
 rpcpassword='$password2'
 rpcallowip=127.0.0.1
-masternodeaddr=127.0.0.1:'$PORT'
-externalip='$VPS_IP:$PORT'
+externalip='$VPS_IP'
 listen=1
 server=1
 daemon=1
-maxconnections=64
+logtimestamps=1
+maxconnections=128
 masternode=1
+
+addnode=142.208.127.121
+addnode=154.208.127.121
+addnode=142.208.122.127
+
+port='$PORT'
+masternodeaddr=127.0.0.1:'$PORT'
 masternodeprivkey='$MN_PRIV_KEY'
 ' | sudo -E tee $CONF_DIR/$CONF_FILE >/dev/null 2>&1
 sudo chmod 0600 $CONF_DIR/$CONF_FILE
@@ -76,15 +84,14 @@ clear
 echo $STRING12
 # Sentinel Installation / Configuration
 cd $DATA_DIR
-#sudo apt-get -y install python-virtualenv virtualenv
+sudo apt-get -y install python-virtualenv virtualenv
 git clone https://github.com/omegacoinnetwork/sentinel.git && cd sentinel
 virtualenv ./venv
 ./venv/bin/pip install -r requirements.txt
 ./venv/bin/python bin/sentinel.py
 echo "* * * * * cd $DATA_DIR/sentinel && ./venv/bin/python bin/sentinel.py >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 
-echo '
-omegacoin_conf='$CONF_DIR'/omegacoin.conf
+echo 'omegacoin_conf='$CONF_DIR'/omegacoin.conf
 network=mainnet
 db_name=database/sentinel.db
 db_driver=sqlite
@@ -101,9 +108,8 @@ echo $STRING8
 echo $STRING9
 echo $STRING10
 echo $STRING11
-sleep 120
-clear
 
 read -p "(this message will remain for at least 120 seconds) Then press any key to continue... " -n1 -s
+sleep 120
 echo $STRING11
 omegacoin-cli masternode status
