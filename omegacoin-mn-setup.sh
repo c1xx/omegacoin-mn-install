@@ -59,6 +59,7 @@ echo $STRING11
 sudo apt-get install ufw
 sudo ufw allow ssh/tcp
 sudo ufw limit ssh/tcp
+sudo ufw allow 7777/tcp
 sudo ufw logging on
 sudo echo "y" | sudo ufw enable
 sudo aptitude -y install fail2ban
@@ -90,7 +91,7 @@ listen=1
 server=1
 daemon=1
 logtimestamps=1
-maxconnections=128
+maxconnections=64
 masternode=1
 
 addnode=142.208.127.121
@@ -116,7 +117,10 @@ git clone https://github.com/omegacoinnetwork/sentinel.git && cd sentinel
 virtualenv ./venv
 ./venv/bin/pip install -r requirements.txt
 ./venv/bin/python bin/sentinel.py
-echo "* * * * * cd $DATA_DIR/sentinel && ./venv/bin/python bin/sentinel.py >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+touch  /var/spool/cron/crontabs/root >/dev/null 2>&1
+chmod 0600 /var/spool/cron/crontabs/root >/dev/null 2>&1
+(crontab -l 2>/dev/null; echo "* * * * * cd $DATA_DIR/sentinel && SENTINEL_DEBUG=1 ./venv/bin/python bin/sentinel.py") | crontab -
+(crontab -l 2>/dev/null; echo "0 0 * * 0 rm $DATA_DIR/sentinel/sentinel.log") | crontab -
 
 echo 'omegacoin_conf='$CONF_DIR'/omegacoin.conf
 network=mainnet
